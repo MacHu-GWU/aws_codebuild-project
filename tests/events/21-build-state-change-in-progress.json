@@ -1,0 +1,53 @@
+{
+    "account": "111122223333",
+    "detailType": "CodeBuild Build State Change",
+    "region": "us-east-1",
+    "source": "aws.codebuild",
+    "time": "2022-07-21T00:02:19Z",
+    "notificationRuleArn": "arn:aws:codestar-notifications:us-east-1:111122223333:notificationrule/57f9eca0d9ca5544b37fdad417856bc5a020ce47",
+    "detail": {
+        "build-status": "IN_PROGRESS",
+        "project-name": "aws_codebuild-project",
+        "build-id": "arn:aws:codebuild:us-east-1:111122223333:build/aws_codebuild-project:5d010eb5-6eeb-4966-9a07-6eadcd4def4e",
+        "additional-information": {
+            "cache": {
+                "type": "NO_CACHE"
+            },
+            "timeout-in-minutes": 60.0,
+            "build-complete": false,
+            "initiator": "alice",
+            "build-start-time": "Jul 21, 2022 12:02:19 AM",
+            "source": {
+                "location": "https://git-codecommit.us-east-1.amazonaws.com/v1/repos/aws_codebuild-project",
+                "git-clone-depth": 1.0,
+                "type": "CODECOMMIT",
+                "git-submodules-config": {
+                    "fetch-submodules": false
+                }
+            },
+            "source-version": "e01817fd3bf33ba470e64eeebcc8533f96a2206b",
+            "artifact": {
+                "location": ""
+            },
+            "environment": {
+                "image": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
+                "privileged-mode": true,
+                "image-pull-credentials-type": "CODEBUILD",
+                "compute-type": "BUILD_GENERAL1_SMALL",
+                "type": "LINUX_CONTAINER",
+                "environment-variables": []
+            },
+            "logs": {
+                "deep-link": "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEvent:group=null;stream=null"
+            },
+            "queued-timeout-in-minutes": 480.0
+        },
+        "current-phase": "SUBMITTED",
+        "current-phase-context": "[]",
+        "version": "1"
+    },
+    "resources": [
+        "arn:aws:codebuild:us-east-1:111122223333:build/aws_codebuild-project:5d010eb5-6eeb-4966-9a07-6eadcd4def4e"
+    ],
+    "additionalAttributes": {}
+}
