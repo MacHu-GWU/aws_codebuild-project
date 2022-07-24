@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-TODO: add more comments
+This module allow you to use AWS Lambda to process the CodeBuild
+notification event. You can configure CodeBuild notification rule and send
+those events to SNS topic, then use AWS Lambda to subscribe the SNS topic.
+
+It enables you to react to build job run "start, failed, succeeded".
+For example, you can send message to slack, send email when failed, etc ...
 """
 
 from typing import Tuple
@@ -26,8 +31,10 @@ class CodeBuildEventTypeEnum:
 class CodeBuildEvent:
     """
     Data container class to represent a CodeBuild event.
-    """
 
+    - snake case attributes are json data key value pair
+    - camel case properties are human friendly derived value
+    """
     detail_type: str = ""
     build_id: str = ""
     build_status: str = ""
@@ -84,30 +91,58 @@ class CodeBuildEvent:
 
     @cached_property
     def awsAccountId(self) -> str:
+        """
+        AWS Account ID where this job runs.
+        """
         return self.parsed_build_id[0]
 
     @cached_property
     def awsRegion(self) -> str:
+        """
+        AWS Region where this job runs.
+        """
         return self.parsed_build_id[1]
 
     @cached_property
     def buildUUID(self) -> str:
+        """
+        Full job id, it is the project name + uuid.
+        """
         return self.parsed_build_id[2]
 
     @cached_property
     def buildProject(self) -> str:
+        """
+        AWS CodeBuild Project name of this job run.
+        """
         return self.parsed_build_id[3]
 
     @cached_property
     def buildId(self) -> str:
+        """
+        The UUID4 part of of this job run.
+        """
         return self.parsed_build_id[4]
 
     @cached_property
+    def buildRunConsoleUrl(self) -> str:
+        """
+        AWS Console Url of this job run details.
+        """
+        return f"https://{self.awsRegion}.console.aws.amazon.com/codesuite/codebuild/{self.awsAccountId}/projects/{self.buildProject}/build/{self.buildUUID}/?region={self.awsRegion}"
+
+    @cached_property
     def buildNumber(self) -> int:
+        """
+        Digits job run id.
+        """
         return int(self.build_number)
 
     @cached_property
     def buildStartTime(self) -> datetime:
+        """
+        Job run start time in datetime.
+        """
         return datetime.strptime(self.build_start_time, "%b %d, %Y %I:%M:%S %p")
 
     @cached_property
@@ -127,13 +162,22 @@ class CodeBuildEvent:
             return CodeBuildEventTypeEnum.unknown
 
     @cached_property
-    def is_state_in_progress(self):
+    def is_state_in_progress(self) -> bool:
+        """
+        Is it a job start event?
+        """
         return self.event_type == CodeBuildEventTypeEnum.state_in_progress
 
     @cached_property
-    def is_state_failed(self):
+    def is_state_failed(self) -> bool:
+        """
+        Is it a job failed event?
+        """
         return self.event_type == CodeBuildEventTypeEnum.state_failed
 
     @cached_property
-    def is_state_succeeded(self):
+    def is_state_succeeded(self) -> bool:
+        """
+        Is it a job succeeeded event?
+        """
         return self.event_type == CodeBuildEventTypeEnum.state_succeeded

@@ -81,6 +81,7 @@ def test_properties():
     assert CBEventEnum.state_in_progress.buildId == "5d010eb5-6eeb-4966-9a07-6eadcd4def4e"
     assert CBEventEnum.state_in_progress.buildNumber == 0
     assert CBEventEnum.state_in_progress.buildStartTime == datetime(2022, 7, 21, 0, 2, 19)
+    _ = CBEventEnum.state_in_progress.buildRunConsoleUrl
 
     assert CBEventEnum.state_failed.buildNumber == 176
     assert CBEventEnum.state_succeeded.buildNumber == 99
