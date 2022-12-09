@@ -14,7 +14,7 @@ __author_email__ = "husanhe@gmail.com"
 __github_username__ = "MacHu-GWU"
 
 try:
-    from .arn_and_console import BuildRun
+    from .arn_and_console import BuildJobRun
     from .better_boto import (
         start_build,
         start_build_batch,

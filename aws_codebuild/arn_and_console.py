@@ -4,14 +4,14 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class BuildRun:
+class BuildJobRun:
     aws_account_id: str = dataclasses.field()
     aws_region: str = dataclasses.field()
     project_name: str = dataclasses.field()
     run_id: str = dataclasses.field()
 
     @classmethod
-    def from_arn(cls, arn: str) -> "BuildRun":
+    def from_arn(cls, arn: str) -> "BuildJobRun":
         part1, part2 = arn.split("/")
         part1_chunks = part1.split(":")
         part2_chunks = part2.split(":")
@@ -30,7 +30,7 @@ class BuildRun:
         )
 
     @classmethod
-    def from_console_url(cls, console_url) -> "BuildRun":
+    def from_console_url(cls, console_url) -> "BuildJobRun":
         parts = console_url.split("/")
         return cls(
             aws_account_id=parts[5],

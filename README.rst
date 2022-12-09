@@ -51,8 +51,14 @@
 
 Welcome to ``aws_codebuild`` Documentation
 ==============================================================================
+**Feature**:
 
-Documentation for ``aws_codebuild``.
+- ``aws_codebuild.CodeBuildEventTypeEnum``: codebuild trigger event type enumeration
+- ``aws_codebuild.CodeBuildEvent``: codebuild trigger event data class
+- ``aws_codebuild.BuildJobRun``: build job run data class
+- ``aws_codebuild.start_build``: better boto3 start_build API
+- ``aws_codebuild.start_build_batch``: better boto3 start_build_batch API
+- ``aws_codebuild.BuiltinEnvVar``: built in build job run environment variable accessor
 
 
 .. _install:
