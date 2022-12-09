@@ -89,8 +89,13 @@ def test_properties():
 
 def test_event_type():
     assert CBEventEnum.state_in_progress.is_state_in_progress
+    assert CBEventEnum.state_in_progress.is_state_changed
+
     assert CBEventEnum.state_failed.is_state_failed
+    assert CBEventEnum.state_failed.is_state_changed
+
     assert CBEventEnum.state_succeeded.is_state_succeeded
+    assert CBEventEnum.state_succeeded.is_state_changed
 
 
 def test_env_var_seder():

@@ -35,6 +35,7 @@ class CodeBuildEvent:
     - snake case attributes are json data key value pair
     - camel case properties are human friendly derived value
     """
+
     detail_type: str = ""
     build_id: str = ""
     build_status: str = ""
@@ -178,6 +179,15 @@ class CodeBuildEvent:
     @cached_property
     def is_state_succeeded(self) -> bool:
         """
-        Is it a job succeeeded event?
+        Is it a job succeeded event?
         """
         return self.event_type == CodeBuildEventTypeEnum.state_succeeded
+
+    @cached_property
+    def is_state_changed(self) -> bool:
+        """
+        Is the build move from one phase to another?
+        """
+        return (
+            self.is_state_in_progress or self.is_state_failed or self.is_state_succeeded
+        )
