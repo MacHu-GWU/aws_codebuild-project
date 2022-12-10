@@ -7,6 +7,7 @@ omit =
     aws_codebuild/compat.py
     aws_codebuild/better_boto.py
     aws_codebuild/env_var.py
+    aws_codebuild/arg.py
 
 [report]
 # Regexes for lines to exclude from consideration
