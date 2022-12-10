@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import typing as T
 import dataclasses
 
 
@@ -9,6 +10,8 @@ class BuildJobRun:
     aws_region: str = dataclasses.field()
     project_name: str = dataclasses.field()
     run_id: str = dataclasses.field()
+    build_number: T.Optional[int] = dataclasses.field(default=None)
+    build_batch_arn: T.Optional[str] = dataclasses.field(default=None)
 
     @classmethod
     def from_arn(cls, arn: str) -> "BuildJobRun":
@@ -46,3 +49,19 @@ class BuildJobRun:
             f"{self.aws_account_id}/projects/{self.project_name}/build/"
             f"{self.project_name}:{self.run_id}/?region={self.aws_region}"
         )
+
+    @classmethod
+    def from_start_build_response(cls, res: dict) -> "BuildJobRun":
+        if "build" in res:
+            data = res["build"]
+            build_number = data["buildNumber"]
+        elif "buildBatch" in res:
+            data = res["buildBatch"]
+            build_number = data["buildBatchNumber"]
+        else:  # pragma: no cover
+            raise NotImplementedError
+
+        build_job_run = BuildJobRun.from_arn(data["arn"])
+        build_job_run.build_number = build_number
+        build_job_run.build_batch_arn = data.get("buildBatchArn")
+        return build_job_run

@@ -29,6 +29,30 @@ class TestBuildRun:
             == "https://us-east-1.console.aws.amazon.com/codesuite/codebuild/111122223333/projects/my-project/build/my-project:1a2b3c4d-1234-abcd-1234-1a2b3c4d5e6f/?region=us-east-1"
         )
 
+    def test_from_start_build_response(self):
+        start_build_response = {
+            "build": {
+                "id": "string",
+                "arn": "arn:aws:codebuild:us-east-1:111122223333:build/my-project:1a2b3c4d-1234-abcd-1234-1a2b3c4d5e6f",
+                "buildNumber": 123,
+                "buildBatchArn": "it-is-an-arn",
+            }
+        }
+        build_job_run = BuildJobRun.from_start_build_response(start_build_response)
+        assert build_job_run.build_number == 123
+
+        start_build_batch_response = {
+            "buildBatch": {
+                "id": "string",
+                "arn": "arn:aws:codebuild:us-east-1:111122223333:build/my-project:1a2b3c4d-1234-abcd-1234-1a2b3c4d5e6f",
+                "buildBatchNumber": 456,
+            }
+        }
+        build_job_run = BuildJobRun.from_start_build_response(
+            start_build_batch_response
+        )
+        assert build_job_run.build_number == 456
+
 
 if __name__ == "__main__":
     basename = os.path.basename(__file__)
