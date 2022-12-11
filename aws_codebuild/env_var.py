@@ -12,6 +12,8 @@ class BuiltinEnvVar:
     Reference:
 
     - https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html
+
+    .. versionadded:: 1.1.1
     """
 
     AWS_DEFAULT_REGION: str = dataclasses.field()

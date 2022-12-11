@@ -21,6 +21,8 @@ class BuildJobRun:
     - project_name: "my-project"
     - run_id: "ae6a271b-609e-4e76-b6bb-3bac681edd05"
     - run_uuid: "my-project:ae6a271b-609e-4e76-b6bb-3bac681edd05"
+
+    .. versionadded:: 1.1.1
     """
     is_batch: bool = dataclasses.field()
     aws_account_id: str = dataclasses.field()

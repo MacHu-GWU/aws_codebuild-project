@@ -15,6 +15,34 @@ Backlog
 **Miscellaneous**
 
 
+1.2.1 (2022-12-11)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add the following public API:
+    - ``aws_codebuild.BuildStatusEnum``
+    - ``aws_codebuild.CompletePhaseStatusEnum``
+    - ``aws_codebuild.PhaseEnum``
+
+**Miscellaneous**
+
+- add ``versionadded`` doc.
+
+
+1.1.1 (2022-12-11)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- First API stable version
+- Add the following public API:
+    - ``aws_codebuild.BuildJobRun``
+    - ``aws_codebuild.start_build``
+    - ``aws_codebuild.start_build_batch``
+    - ``aws_codebuild.BuiltinEnvVar``
+    - ``aws_codebuild.CodeBuildEventTypeEnum``
+    - ``aws_codebuild.CodeBuildEvent``
+
+
 0.2.2 (2022-12-10)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Bugfixes**

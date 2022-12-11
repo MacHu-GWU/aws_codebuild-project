@@ -15,17 +15,42 @@ from .arn_and_console import BuildJobRun
 
 
 class CodeBuildEventTypeEnum(str, enum.Enum):
+    """
+    Reference:
+
+    - https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html
+
+    .. versionadded:: 1.1.1
+    """
+
     state_change = "CodeBuild Build State Change"
     phase_change = "CodeBuild Build Phase Change"
 
 
 class BuildStatusEnum(str, enum.Enum):
+    """
+    Reference:
+
+    - https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html
+
+    .. versionadded:: 1.2.1
+    """
+
     IN_PROGRESS = "IN_PROGRESS"
     FAILED = "FAILED"
     SUCCEEDED = "SUCCEEDED"
+    STOPPED = "STOPPED"
 
 
 class PhaseEnum(str, enum.Enum):
+    """
+    Reference:
+
+    - https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html
+
+    .. versionadded:: 1.2.1
+    """
+
     INITIALIZED = "INITIALIZED"
     SUBMITTED = "SUBMITTED"
     QUEUED = "QUEUED"
@@ -38,6 +63,23 @@ class PhaseEnum(str, enum.Enum):
     UPLOAD_ARTIFACTS = "UPLOAD_ARTIFACTS"
     FINALIZING = "FINALIZING"
     COMPLETED = "COMPLETED"
+
+
+class CompletePhaseStatusEnum(str, enum.Enum):
+    """
+    Reference:
+
+    - https://docs.aws.amazon.com/codebuild/latest/userguide/sample-build-notifications.html
+
+    .. versionadded:: 1.2.1
+    """
+
+    TIMED_OUT = "TIMED_OUT"
+    FAILED = "FAILED"
+    SUCCEEDED = "SUCCEEDED"
+    STOPPED = "STOPPED"
+    FAULT = "FAULT"
+    CLIENT_ERROR = "CLIENT_ERROR"
 
 
 DATETIME_FORMAT = "%b %d, %Y %I:%M:%S %p"
@@ -294,6 +336,9 @@ class CodeBuildEvent:
     def is_build_status_SUCCEEDED(self) -> bool:
         return self.build_status == BuildStatusEnum.SUCCEEDED
 
+    def is_build_status_STOPPED(self) -> bool:
+        return self.build_status == BuildStatusEnum.STOPPED
+
     def is_complete_phase_INITIALIZED(self) -> bool:
         return self.complete_phase == PhaseEnum.INITIALIZED
 
@@ -324,11 +369,20 @@ class CodeBuildEvent:
     def is_complete_phase_COMPLETED(self) -> bool:
         return self.complete_phase == PhaseEnum.COMPLETED
 
-    def is_complete_phase_status_IN_PROGRESS(self) -> bool:
-        return self.complete_phase_status == BuildStatusEnum.IN_PROGRESS
+    def is_complete_phase_status_TIMED_OUT(self) -> bool:
+        return self.complete_phase_status == CompletePhaseStatusEnum.TIMED_OUT
 
     def is_complete_phase_status_FAILED(self) -> bool:
-        return self.complete_phase_status == BuildStatusEnum.FAILED
+        return self.complete_phase_status == CompletePhaseStatusEnum.FAILED
 
     def is_complete_phase_status_SUCCEEDED(self) -> bool:
-        return self.complete_phase_status == BuildStatusEnum.SUCCEEDED
+        return self.complete_phase_status == CompletePhaseStatusEnum.SUCCEEDED
+
+    def is_complete_phase_status_STOPPED(self) -> bool:
+        return self.complete_phase_status == CompletePhaseStatusEnum.STOPPED
+
+    def is_complete_phase_status_FAULT(self) -> bool:
+        return self.complete_phase_status == CompletePhaseStatusEnum.FAULT
+
+    def is_complete_phase_status_CLIENT_ERROR(self) -> bool:
+        return self.complete_phase_status == CompletePhaseStatusEnum.CLIENT_ERROR

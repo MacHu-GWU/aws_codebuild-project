@@ -117,9 +117,12 @@ def test_is_method():
         value.v.is_complete_phase_UPLOAD_ARTIFACTS()
         value.v.is_complete_phase_FINALIZING()
         value.v.is_complete_phase_COMPLETED()
-        value.v.is_complete_phase_status_IN_PROGRESS()
+        value.v.is_complete_phase_status_TIMED_OUT()
         value.v.is_complete_phase_status_FAILED()
         value.v.is_complete_phase_status_SUCCEEDED()
+        value.v.is_complete_phase_status_STOPPED()
+        value.v.is_complete_phase_status_FAULT()
+        value.v.is_complete_phase_status_CLIENT_ERROR()
 
 
 def test_attribute_value():
@@ -156,6 +159,7 @@ def test_method_value():
     assert CBEventEnum.state_failed.v.is_build_status_SUCCEEDED() is False
     assert CBEventEnum.state_succeeded.v.is_build_status_FAILED() is False
     assert CBEventEnum.state_succeeded.v.is_build_status_SUCCEEDED() is True
+    assert CBEventEnum.state_in_progress.v.is_build_status_STOPPED() is False
 
 
 def test_plain_text_env_var():
