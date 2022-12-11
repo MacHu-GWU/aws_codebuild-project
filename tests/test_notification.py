@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import pytest
-
-from typing import List
-import os
+import typing as T
 import re
+import enum
 import json
 import dataclasses
 from pathlib import Path
 from datetime import datetime
-from unittest.mock import patch, PropertyMock
 
 from aws_codebuild.notification import (
     CodeBuildEventTypeEnum,
@@ -57,56 +54,118 @@ def read_json(file: str) -> dict:
 
 
 def read_cb_event(fname: str) -> CBE:
-    return CBE.from_event(
+    return CBE.from_codebuid_notification_event(
         read_json(f"{dir_codebuild_events / fname}")
     )
 
 
-class CBEventEnum:
-    state_in_progress = read_cb_event("21-build-state-change-in-progress.json")
-    state_failed = read_cb_event("22-build-state-change-failed.json")
-    state_succeeded = read_cb_event("23-build-state-change-succeeded.json")
+class Value(T.NamedTuple):
+    v: CodeBuildEvent
 
 
-cb_event_list: List[CodeBuildEvent] = [
-    v for k, v in CBEventEnum.__dict__.items() if not k.startswith("_")
-]
+class CBEventEnum(Value, enum.Enum):
+    state_in_progress = Value(v=read_cb_event("21-build-state-change-in-progress.json"))
+    state_failed = Value(v=read_cb_event("22-build-state-change-failed.json"))
+    state_succeeded = Value(v=read_cb_event("23-build-state-change-succeeded.json"))
 
-
-def test_properties():
-    assert CBEventEnum.state_in_progress.awsAccountId == "111122223333"
-    assert CBEventEnum.state_in_progress.awsRegion == "us-east-1"
-    assert CBEventEnum.state_in_progress.buildUUID == "aws_codebuild-project:5d010eb5-6eeb-4966-9a07-6eadcd4def4e"
-    assert CBEventEnum.state_in_progress.buildProject == "aws_codebuild-project"
-    assert CBEventEnum.state_in_progress.buildId == "5d010eb5-6eeb-4966-9a07-6eadcd4def4e"
-    assert CBEventEnum.state_in_progress.buildNumber == 0
-    assert CBEventEnum.state_in_progress.buildStartTime == datetime(2022, 7, 21, 0, 2, 19)
-    _ = CBEventEnum.state_in_progress.buildRunConsoleUrl
-
-    assert CBEventEnum.state_failed.buildNumber == 176
-    assert CBEventEnum.state_succeeded.buildNumber == 99
-
-
-def test_event_type():
-    assert CBEventEnum.state_in_progress.is_state_in_progress
-    assert CBEventEnum.state_in_progress.is_state_changed
-
-    assert CBEventEnum.state_failed.is_state_failed
-    assert CBEventEnum.state_failed.is_state_changed
-
-    assert CBEventEnum.state_succeeded.is_state_succeeded
-    assert CBEventEnum.state_succeeded.is_state_changed
-
-
-def test_env_var_seder():
-    env_var = CBEventEnum.state_succeeded.to_env_var(prefix="CUSTOM_")
-    cb_event = CodeBuildEvent.from_env_var(env_var, prefix="CUSTOM_")
-    assert (
-        dataclasses.asdict(CBEventEnum.state_succeeded)
-        == dataclasses.asdict(cb_event)
+    phase_change_pre_build = Value(
+        v=read_cb_event("31-build-phase-change-pre-build.json")
     )
 
 
+cb_event_list: T.List[CodeBuildEvent] = [value.v for value in CBEventEnum]
+
+
+def test_properties():
+    fields = [
+        field
+        for field in dataclasses.fields(CodeBuildEvent)
+        if field.name not in ["_data", "bsm"]
+    ]
+    for value in CBEventEnum:
+        for field in fields:
+            getattr(value.v, field.name)
+
+
+def test_is_method():
+    for value in [
+        CBEventEnum.state_in_progress,
+        CBEventEnum.state_failed,
+        CBEventEnum.state_succeeded,
+    ]:
+        value.v.is_state_change_event()
+        value.v.is_phase_change_event()
+
+        value.v.is_build_status_IN_PROGRESS()
+        value.v.is_build_status_FAILED()
+        value.v.is_build_status_SUCCEEDED()
+
+    for value in [
+        CBEventEnum.phase_change_pre_build,
+    ]:
+
+        value.v.is_state_change_event()
+        value.v.is_phase_change_event()
+
+        value.v.is_complete_phase_INITIALIZED()
+        value.v.is_complete_phase_SUBMITTED()
+        value.v.is_complete_phase_PROVISIONING()
+        value.v.is_complete_phase_DOWNLOAD_SOURCE()
+        value.v.is_complete_phase_INSTALL()
+        value.v.is_complete_phase_PRE_BUILD()
+        value.v.is_complete_phase_POST_BUILD()
+        value.v.is_complete_phase_UPLOAD_ARTIFACTS()
+        value.v.is_complete_phase_FINALIZING()
+        value.v.is_complete_phase_COMPLETED()
+        value.v.is_complete_phase_status_IN_PROGRESS()
+        value.v.is_complete_phase_status_FAILED()
+        value.v.is_complete_phase_status_SUCCEEDED()
+
+
+def test_attribute_value():
+    assert CBEventEnum.state_in_progress.v.aws_account_id == "111122223333"
+    assert CBEventEnum.state_in_progress.v.aws_region == "us-east-1"
+    assert CBEventEnum.state_in_progress.v.project_name == "aws_codebuild-project"
+    assert CBEventEnum.state_in_progress.v.build_number is None
+    assert CBEventEnum.state_in_progress.v.build_start_datetime == datetime(
+        2022, 7, 21, 0, 2, 19
+    )
+    assert CBEventEnum.state_in_progress.v.complete_phase_start_datetime is None
+    assert CBEventEnum.state_in_progress.v.complete_phase_end_datetime is None
+
+    _ = CBEventEnum.state_in_progress.v.console_url
+
+    assert CBEventEnum.state_failed.v.build_number == 176
+    assert CBEventEnum.state_succeeded.v.build_number == 99
+
+    assert CBEventEnum.phase_change_pre_build.v.build_start_datetime == datetime(
+        2022, 12, 11, 0, 44, 39
+    )
+    assert (
+        CBEventEnum.phase_change_pre_build.v.complete_phase_start_datetime
+        == datetime(2022, 12, 11, 0, 45, 35)
+    )
+    assert CBEventEnum.phase_change_pre_build.v.complete_phase_end_datetime == datetime(
+        2022, 12, 11, 0, 45, 35
+    )
+
+
+def test_method_value():
+    assert CBEventEnum.state_in_progress.v.is_build_status_IN_PROGRESS() is True
+    assert CBEventEnum.state_failed.v.is_build_status_FAILED() is True
+    assert CBEventEnum.state_failed.v.is_build_status_SUCCEEDED() is False
+    assert CBEventEnum.state_succeeded.v.is_build_status_FAILED() is False
+    assert CBEventEnum.state_succeeded.v.is_build_status_SUCCEEDED() is True
+
+
+def test_plain_text_env_var():
+    assert CBEventEnum.phase_change_pre_build.v.plain_text_env_var == {
+        "CI_DATA_COMMENT_ID": "7763f126-91f0-4a0b-8c78-9d4aa7ef3db7:b1cacec7-7638-4b2f-a4a1-84bb58d3b6e6",
+        "CI_DATA_COMMIT_MESSAGE": "Update chore.txt\n",
+    }
+
+
 if __name__ == "__main__":
-    basename = os.path.basename(__file__)
-    pytest.main([basename, "-s", "--tb=native"])
+    from aws_codebuild.tests import run_cov_test
+
+    run_cov_test(__file__, "aws_codebuild.notification", preview=False)
