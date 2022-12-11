@@ -1,12 +1,21 @@
 # -*- coding: utf-8 -*-
 
+"""
+Improved boto3 codebuild API.
+
+Reference:
+
+- https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codebuild.html
+"""
+
 import typing as T
 
+from boto_session_manager import BotoSesManager
 from .arg import NOTHING, resolve_kwargs
 
 
 def start_build(
-    cb_client,
+    bsm: BotoSesManager,
     projectName: str,
     secondarySourcesOverride: T.Optional[dict] = NOTHING,
     secondarySourcesVersionOverride: T.Optional[dict] = NOTHING,
@@ -43,8 +52,10 @@ def start_build(
     Reference:
 
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codebuild.html#CodeBuild.Client.start_build
+
+    .. versionadded:: 1.1.1
     """
-    return cb_client.start_build(
+    return bsm.codebuild_client.start_build(
         **resolve_kwargs(
             projectName=projectName,
             secondarySourcesOverride=secondarySourcesOverride,
@@ -82,7 +93,7 @@ def start_build(
 
 
 def start_build_batch(
-    cb_client,
+    bsm: BotoSesManager,
     projectName: str,
     secondarySourcesOverride: T.Optional[dict] = NOTHING,
     secondarySourcesVersionOverride: T.Optional[dict] = NOTHING,
@@ -119,8 +130,10 @@ def start_build_batch(
     Reference:
 
     - https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/codebuild.html#CodeBuild.Client.start_build_batch
+
+    .. versionadded:: 1.1.1
     """
-    return cb_client.start_build_batch(
+    return bsm.codebuild_client.start_build_batch(
         **resolve_kwargs(
             projectName=projectName,
             secondarySourcesOverride=secondarySourcesOverride,
